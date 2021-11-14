@@ -67,7 +67,7 @@ def ConsultarVenta():
         while dimension < len(DiccionarioVentas[consulta]):
             print(separador)
             print(f'Descripción del tipo de Cosmetico: {DiccionarioVentas[consulta][dimension].descripcion}')
-            print(f'Cantidad de Cosmeticos: {DiccionarioVentas[consulta][dimension].cantidadVenta}')
+            print(f'Cantidad de llantas: {DiccionarioVentas[consulta][dimension].cantidadVenta}')
             print('Precio: ${:.2f}'.format(DiccionarioVentas[consulta][dimension].precioVenta, 2))
             print(f'Fecha: {DiccionarioVentas[consulta][dimension].fechaVenta}')
             totalVentas = (float(DiccionarioVentas[consulta][dimension].precioVenta) * float(DiccionarioVentas[consulta][dimension].cantidadVenta)) + totalVentas
@@ -89,9 +89,9 @@ def ReporteVentas():
     GranTotalVentasDiaConIva = 0
 
     for key, valor in DiccionarioVentas.items() :
-        diferentesCosmeticosDentroMismaVenta = len(valor)
+        diferentesllantasDentroMismaVenta = len(valor)
         contador = 0
-        while contador < diferentesCosmeticosDentroMismaVenta:
+        while contador < diferentesllantasDentroMismaVenta:
             fechaExtraida = valor[contador].fechaVenta # Se evitó el [:-15] en "fechaVenta"
 
             if fechaBusqueda == fechaExtraida:
@@ -121,7 +121,7 @@ def GuardarSQL_Lite3():
 
     # Creación de Base de datos
     try:
-        with sqlite3.connect("RegistroTiendaCosmeticos.db") as conn: #1 Establezco conexion
+        with sqlite3.connect("RegistroTiendallantas.db") as conn: #1 Establezco conexion
             c = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
             c.execute("CREATE TABLE IF NOT EXISTS Folios (folio INTEGER PRIMARY KEY NOT NULL, fecha TEXT NOT NULL);") #3 Envio instrucciones mediante el curosr
             c.execute("CREATE TABLE IF NOT EXISTS DescVentas (numDescripcion INTEGER PRIMARY KEY NOT NULL, descripcion TEXT NOT NULL, cantidad INTEGER NOT NULL, precio REAL NOT NULL, folio INTEGER NOT NULL, FOREIGN KEY (folio) REFERENCES Folios (folio));") #3 Envio instrucciones mediante el cursor
@@ -146,7 +146,7 @@ def GuardarSQL_Lite3():
 
         # Guardado de folios y fechas de ventas
         try:
-            with sqlite3.connect("RegistroTiendaCosmeticos.db") as conn: #1 Establezco conexion
+            with sqlite3.connect("RegistroTiendallantas.db") as conn: #1 Establezco conexion
                 c = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
                 c.execute("INSERT INTO Folios VALUES(?, ?)", (folio,fecha))
         except Error as e:
@@ -168,7 +168,7 @@ def GuardarSQL_Lite3():
 
             # Guardado de descripciones de ventas independientes
             try:
-                with sqlite3.connect("RegistroTiendaCosmeticos.db") as conn: #1 Establezco conexion
+                with sqlite3.connect("RegistroTiendallantas.db") as conn: #1 Establezco conexion
                     c = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
                     c.execute("INSERT INTO DescVentas VALUES(?, ?, ?, ?, ?)", (numDescripcion,descripcion,cantidad,precio,folio))
             except Error as e:
