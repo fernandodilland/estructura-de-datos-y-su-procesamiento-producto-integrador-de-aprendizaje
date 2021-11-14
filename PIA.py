@@ -175,8 +175,8 @@ def RegistrarVenta():
 
 def ConsultarVenta():
     try:
-        # original 2 >>>> with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
-        with sqlite3.connect("BD_PIA.db",detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
+        with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
+        #with sqlite3.connect("BD_PIA.db",detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
             cursorPIA = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
             while True:
                 fechaAConsultar = input("Ingrese la fecha a buscar (ej: 14/11/2021)\n» ")
@@ -194,19 +194,51 @@ def ConsultarVenta():
                     
                     
                     
+                    try:
+                        #cursorPIA.execute("""SELECT fechaID.folio, Venta.descripcion, Venta.canitdad, Venta.precio, fechaID.fecha \
+                        #                    FROM FechaID\
+                        #                    INNER JOIN Venta on FechaID.folio = Venta.folio\
+                        #                    WHERE FechaID.fecha = ?""",(fechaAConsultar,))
+                        
+                        cursorPIA.execute("""SELECT DescVentas.folio, DescVentas.descripcion, DescVentas.cantidad, DescVentas.precio, Folios.fecha \
+                                            FROM DescVentas\
+                                            INNER JOIN Folios on DescVentas.folio = Folios.folio\
+                                            WHERE Folios.fecha = ?""",(fechaAConsultar,))
+                        
+                        resultados = cursorPIA.fetchall()
+                        if resultados:
+                            print("Folio\tDescripcion\tCantidad\tPrecio\tFecha")
+                            for folio, descripcion, cantidad, precio, fecha in resultados:
+                                print(f"{folio}\t{descripcion}\t{cantidad}\t\t{precio}\t{fecha}")
+                                total = (precio * cantidad) + total
+                            print(f"Total de las ventas: ${total:,.2f}")
+                            print(f"El iva aplicable es de: ${total * .16:,.2f}")
+                            print(f"El total con iva aplicado es de: ${total*1.16:,.2f}")
+                        else:
+                            print("\nLa fecha solicitada no existe")
+                    except Error as e:
+                        print(e)
+                    except Exception:
+                        print(f"Error: {sys.exc_info()[0]}")
+                    
+                    
+                    
+                    
                     
                     
                     #try:
                     #with sqlite3.connect("ConFechas_timestamp.db", detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
                         # >>>>>>> original with sqlite3.connect("BD_PIA.db",detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
-                    mi_cursor = conn.cursor()
+                    """mi_cursor = conn.cursor()
                     mi_cursor.execute("SELECT folio, fecha FROM Folios")
                     registros = mi_cursor.fetchall()
             
                     for folio, fecha in registros:
                         print(f"Clave = {folio}, tipo de dato {type(folio)}")
                         print(f"Fecha de registro = {fecha}, tipo de dato {type(fecha)}\n")
-                        
+                    
+                    mi_cursor.execute("SELECT fecha FROM Folios WHERE fecha LIKE ? AND fecha NOT LIKE ?")"""
+                    
                     """except sqlite3.Error as e:
                         print (e)
                     except Exception:
