@@ -33,7 +33,7 @@ def creacionBD_PIA():
         print("No se identificó una base de datos, se creó (BD_PIA.db)")
         print(separador)
     else:
-        print("Se identificó una base de datos (BD_PIA.db)")
+        print("Se identificó la base de datos (BD_PIA.db)")
         
         print(separador)
 
@@ -206,14 +206,14 @@ def ConsultarVenta():
                                             WHERE Folios.fecha = ?""",(fechaAConsultar,))
 
                         resultados = cursorPIA.fetchall()
-                        print("PRUEBA CHIDA ", resultados)
-
-                        print("GG1")
+                        #print("PRUEBA CHIDA ", resultados)
                         if resultados:
-                            print("GG2")
 
                             # Mecanismo de obtención de datos por fila
-                            
+                            print(separador)
+                            print("En la fecha:", fechaAConsultar)
+                            print(separador)
+                            print("Folio |  Descripcion   | Cantidad | Precio unitario")
                             contador = 0
                             for row in zip(*resultados):
                                 contador += 1
@@ -229,22 +229,22 @@ def ConsultarVenta():
                                     columna4=[*row] # Guarda lista de columna
                                 if contador == 5: # Columna 5
                                     columna5=[*row] # Guarda lista de columna
-                                "print("Contador: ", contador)"
+                                #print("Contador: ", contador)
                                 #print "{:<10}{:>7}{:<10}".format(*row)
                             """print("columna 1", columna1)
                             print("columna 2", columna2)
                             print("columna 3", columna3)
                             print("columna 4", columna4)
                             print("columna 5", columna5)"""
-                            
+
                             #print("tamanio temporal",len(resultados))
                             for valor in range(len(resultados)):
                                 #print("test", valor)
-                                print(columna1[valor],columna2[valor],columna3[valor],columna4[valor],columna5[valor])
-
+                                #print(columna1[valor],columna2[valor],columna3[valor],columna4[valor])
+                                print(" {:^4} | {:^14} | {:^8} | ${:.2f}".format(columna1[valor],columna2[valor],columna3[valor],columna4[valor]))
+                            print(separador)
                         else:
-                            print("GG4")
-                            print("FECHA NO EXISTE GGGGG")
+                            print("FECHA NO EXISTE")
 
                         if resultados:"""
                             print("Folio\tDescripcion\tCantidad\tPrecio\tFecha")
