@@ -7,6 +7,7 @@ from sqlite3 import Error
 from datetime import date, datetime
 import os.path
 from os import path
+import datetime
 
 # Declaraciones iniciales
 separador = ('-' * 45)
@@ -62,25 +63,32 @@ def RegistrarVenta():
 
             while True:
 
-                folio = int(input("Inserte el folio de la venta: "))
-                print("*" * 50)
+                # Sistema de obtención de fecha actual en sistema
+                fecha = datetime.datetime.now()
+                year = '{:02d}'.format(fecha.year)
+                month = '{:02d}'.format(fecha.month)
+                day = '{:02d}'.format(fecha.day)
+                fecha = '{}/{}/{}'.format(day, month, year)
+                print("Confirmación de fecha:",fecha)
+                print("Tipo de dato:",type(fecha)) 
+                print(separador)
+                
 
+                # Sistema de validación de existencia de Folio de Venta (en BD)
                 while True:
-                    fecha = input("Fecha de la venta: ")
-                    fecha_capturada = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
-                    fecha_actual = datetime.date.today()
-
-                    if fecha_capturada > fecha_actual:
-                        print("La fecha capturada no es válida. Ingrese una fecha menor o igual a la fecha actual.")
-                        print("*" * 50)
-                    else:
-                        print("*" * 50)
+                    folioVenta = int(input("Ingrese el folio de la venta\n> "))
+                    valor_folio = {"Folio":folioVenta} #Diccionario para evitar inyeccion de sql
+                    cursorPIA.execute("SELECT folio FROM Folios WHERE folio = :Folio", valor_folio)
+                    registro = cursorPIA.fetchall()
+                    if registro:
+                        print("Error #5 El folio ya existe")
                         break
+
 
                 while True:
                     cliente = int(input("Ingrese el id del cliente: "))
                     valor_cliente = {"id_cliente":cliente} #Diccionario para evitar inyeccion de sql
-                    cursorPIA.execute("SELECT id_cliente FROM Cliente WHERE id_cliente = :id_cliente", valor_cliente)
+                    cursorPIA.execute("SELECT id_cliente FROM Folios WHERE id_cliente = :id_cliente", valor_cliente)
                     registro = cursorPIA.fetchall()
                     if registro:
                         print("*" * 50)
