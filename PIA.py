@@ -61,7 +61,6 @@ def RegistrarVenta():
     
     
     
-    
     try:
         with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
             c = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
@@ -188,8 +187,8 @@ def RegistrarVenta():
     
     
     
-    
-    
+def ConsultarVenta():
+    pass
     
     
     """ListaVentas=[]
@@ -234,7 +233,7 @@ while True:
     opcionElegida = Menu() # Manda a ejecutar menú y trae elección
     if int(opcionElegida) == 1:
         RegistrarVenta()
-    """if int(opcionElegida) == 2:
-        ConsultarVenta()"""
+    if int(opcionElegida) == 2:
+        ConsultarVenta()
     if int(opcionElegida) == 3:
         break
