@@ -56,7 +56,6 @@ def Menu():
     return opcion
 
 def RegistrarVenta():
-    
     try:
         with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
             cursorPIA = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
@@ -70,22 +69,52 @@ def RegistrarVenta():
                 day = '{:02d}'.format(fecha.day)
                 fecha = '{}/{}/{}'.format(day, month, year)
                 print("Confirmación de fecha:",fecha)
-                print("Tipo de dato:",type(fecha)) 
                 print(separador)
-                
 
                 # Sistema de validación de existencia de Folio de Venta (en BD)
                 while True:
-                    folioVenta = int(input("Ingrese el folio de la venta\n> "))
+                    folioVenta = input("Ingrese el folio de la venta\n» ")
                     valor_folio = {"Folio":folioVenta} #Diccionario para evitar inyeccion de sql
                     cursorPIA.execute("SELECT folio FROM Folios WHERE folio = :Folio", valor_folio)
                     registro = cursorPIA.fetchall()
                     if registro:
-                        print("Error #5 El folio ya existe")
+                        print("Error #3 El folio ya existe")
+                    else:
                         break
 
-
+                # Sistema de obtención de descripción del producto
                 while True:
+                    descripcion = input('Introduzca descripción del tipo de Llanta (Ej: Michelin)\n» ')
+                    if descripcion and descripcion.strip():
+                        break
+                    else:
+                        print("Error #4 Lo introducido está vacío o contiene sólo espacios.")
+                
+                # Sistema de obtención de cantidad del producto
+                while True:
+                    cantidadVenta = input('Introduzca cantidad a vender del tipo de llanta\n» ')
+                    if cantidadVenta and cantidadVenta.strip():
+                        if int(cantidadVenta) > 0:
+                            break
+                        else:
+                            print("Error #5 La cantidad introducida no es superior a cero")
+                    else:
+                        print("Error #4 Lo introducido está vacío o contiene sólo espacios.")
+                
+                # Sistema de obtención del precio del producto
+                while True:
+                    precioVenta = input('Introduzca precio (sin iva) del tipo de llanta (por unidad)\n» $')
+                    if precioVenta and precioVenta.strip():
+                        if int(precioVenta) > 0:
+                            break
+                        else:
+                            print("Error #5 La cantidad introducida no es superior a cero"
+)
+                    else:
+                        print("Error #4 Lo introducido está vacío o contiene sólo espacios.")
+
+
+                """while True:
                     cliente = int(input("Ingrese el id del cliente: "))
                     valor_cliente = {"id_cliente":cliente} #Diccionario para evitar inyeccion de sql
                     cursorPIA.execute("SELECT id_cliente FROM Folios WHERE id_cliente = :id_cliente", valor_cliente)
@@ -95,9 +124,9 @@ def RegistrarVenta():
                         break
                     else:
                         print("El id del cliente no existe. Ingresar un id válido.")
-                        print("*" * 50)
+                        print("*" * 50)"""
 
-                while True:
+                """while True:
                     vendedor = int(input("Ingrese id del vendedor: "))
                     valor_vendedor = {"id_vendedor":vendedor}
                     cursorPIA.execute("SELECT id_vendedor FROM Vendedor WHERE id_vendedor = :id_vendedor", valor_vendedor)
@@ -149,11 +178,10 @@ def RegistrarVenta():
                     if pregunta == 'S':
                         print("*" * 50)
                     else:
-                        break
+                        break"""
                 break
-
-    except Error as e:
-        print(e)
+    #except Error as e:
+    #    print(e)
     except Exception:
         print(f"Se produjo el siguiente error: {sys.exc_info()[0]}")
     finally:
