@@ -22,7 +22,7 @@ def creacionBD_PIA():
             with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
                 cursorPIA = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
                 cursorPIA.execute("CREATE TABLE IF NOT EXISTS Folios (folio INTEGER PRIMARY KEY NOT NULL, fecha TEXT NOT NULL);") #3 Envio instrucciones mediante el curosr
-                cursorPIA.execute("CREATE TABLE IF NOT EXISTS DescVentas (numDescripcion INTEGER PRIMARY KEY NOT NULL, descripcion TEXT NOT NULL, cantidad INTEGER NOT NULL, precio REAL NOT NULL, folio INTEGER NOT NULL, FOREIGN KEY (folio) REFERENCES Folios (folio));") #3 Envio instrucciones mediante el cursor
+                cursorPIA.execute("CREATE TABLE IF NOT EXISTS DescVentas (descripcion TEXT NOT NULL, cantidad INTEGER NOT NULL, precio REAL NOT NULL, folio INTEGER NOT NULL, FOREIGN KEY (folio) REFERENCES Folios (folio));") #3 Envio instrucciones mediante el cursor
         except Error as e:
             print(e)
         except Exception:
@@ -62,6 +62,11 @@ def RegistrarVenta():
 
             while True:
 
+                error3 = "Error #3 El folio ya existe"
+                error4 = "Error #4 Introduzca un número mayor a 0"
+                error5 = "Error #5 Lo introducido está vacío o contiene sólo espacios."
+                error6 = "Error #6 intente con un número"
+
                 # Sistema de obtención de fecha actual en sistema
                 fecha = datetime.datetime.now()
                 year = '{:02d}'.format(fecha.year)
@@ -74,44 +79,81 @@ def RegistrarVenta():
                 # Sistema de validación de existencia de Folio de Venta (en BD)
                 while True:
                     folioVenta = input("Ingrese el folio de la venta\n» ")
-                    valor_folio = {"Folio":folioVenta} #Diccionario para evitar inyeccion de sql
-                    cursorPIA.execute("SELECT folio FROM Folios WHERE folio = :Folio", valor_folio)
-                    registro = cursorPIA.fetchall()
-                    if registro:
-                        print("Error #3 El folio ya existe")
+                    try:
+                        int(folioVenta)
+                        folioVenta = int(folioVenta)
+                        if folioVenta > 0:
+                            valor_folio = {"Folio":folioVenta} #Diccionario para evitar inyeccion de sql
+                            cursorPIA.execute("SELECT folio FROM Folios WHERE folio = :Folio", valor_folio)
+                            registro = cursorPIA.fetchall()
+                            if registro:
+                                print(error3)
+                            else:
+                                break
+                        else:
+                            print(error4)
+                    except:
+                        print(error6)
+
+                # Mecanismo de inyección de datos a SQL en Folios
+                folioVentaInt = int(folioVenta)
+                valores_venta = {"folio":folioVentaInt, "fecha":fecha}
+                #valores_articulo = {"descripcion":descripcion, "cant_pzs":cantidadVenta, "precio_unitario":precioVenta, "folio":Folio}
+                cursorPIA.execute("INSERT INTO Folios VALUES(:folio, :fecha);", valores_venta)
+                print(separador)
+
+                while True: # While para varios productos en misma venta
+
+                    # Sistema de obtención de descripción del producto
+                    while True:
+                        descripcion = input('Introduzca descripción del tipo de Llanta (Ej: Michelin)\n» ')
+                        if descripcion and descripcion.strip():
+                            break
+                        else:
+                            print(error5)
+
+                    while True:
+                        # Sistema de obtención de cantidad del producto
+                        cantidadVenta = input('Introduzca cantidad a vender del tipo de llanta\n» ')
+                        try:
+                            int(cantidadVenta) # Validación TRY
+                            if cantidadVenta and cantidadVenta.strip():
+                                if int(cantidadVenta) > 0:
+                                    break
+                                else:
+                                    print(error4)
+                            else:
+                                print(error5)
+                        except:
+                            print(error6)
+
+                    # Sistema de obtención del precio del producto
+                    while True:
+                        precioVenta = input('Introduzca precio (sin iva) del tipo de llanta (por unidad)\n» $')
+                        try:
+                            int(precioVenta) # Validación TRY
+                            if precioVenta and precioVenta.strip():
+                                if int(precioVenta) > 0:
+                                    break
+                                else:
+                                    print(error4)
+                            else:
+                                print(error5)
+                        except:
+                            print(error6)
+
+                    folioVentaInt = int(folioVenta)
+                    valores_articulo = {"descripcion":descripcion, "cantidad":cantidadVenta, "precio":precioVenta, "folio":folioVentaInt}
+                    cursorPIA.execute("INSERT INTO DescVentas VALUES(:descripcion, :cantidad, :precio, :folio);", valores_articulo)
+                    print(separador)
+                    pregunta = input("¿Quiere seguir registrando? (S/N)\n» ")
+                    if pregunta == 'S':
+                        print(separador)
                     else:
                         break
 
-                # Sistema de obtención de descripción del producto
-                while True:
-                    descripcion = input('Introduzca descripción del tipo de Llanta (Ej: Michelin)\n» ')
-                    if descripcion and descripcion.strip():
-                        break
-                    else:
-                        print("Error #4 Lo introducido está vacío o contiene sólo espacios.")
+                    break # Salida del while receptor de varios productos en misma venta
                 
-                # Sistema de obtención de cantidad del producto
-                while True:
-                    cantidadVenta = input('Introduzca cantidad a vender del tipo de llanta\n» ')
-                    if cantidadVenta and cantidadVenta.strip():
-                        if int(cantidadVenta) > 0:
-                            break
-                        else:
-                            print("Error #5 La cantidad introducida no es superior a cero")
-                    else:
-                        print("Error #4 Lo introducido está vacío o contiene sólo espacios.")
-                
-                # Sistema de obtención del precio del producto
-                while True:
-                    precioVenta = input('Introduzca precio (sin iva) del tipo de llanta (por unidad)\n» $')
-                    if precioVenta and precioVenta.strip():
-                        if int(precioVenta) > 0:
-                            break
-                        else:
-                            print("Error #5 La cantidad introducida no es superior a cero"
-)
-                    else:
-                        print("Error #4 Lo introducido está vacío o contiene sólo espacios.")
 
 
                 """while True:
@@ -180,8 +222,8 @@ def RegistrarVenta():
                     else:
                         break"""
                 break
-    #except Error as e:
-    #    print(e)
+    except Error as e:
+        print(e)
     except Exception:
         print(f"Se produjo el siguiente error: {sys.exc_info()[0]}")
     finally:
