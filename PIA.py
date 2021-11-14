@@ -207,7 +207,46 @@ def ConsultarVenta():
 
                         resultados = cursorPIA.fetchall()
                         print("PRUEBA CHIDA ", resultados)
+
+                        print("GG1")
                         if resultados:
+                            print("GG2")
+
+                            # Mecanismo de obtención de datos por fila
+                            
+                            contador = 0
+                            for row in zip(*resultados):
+                                contador += 1
+                                #print("Tipo dato row",type(*row))
+                                """print("TEST FER GUAPO",*row)"""
+                                if contador == 1: # Columna 1
+                                    columna1=[*row] # Guarda lista de columna
+                                if contador == 2: # Columna 2
+                                    columna2=[*row] # Guarda lista de columna
+                                if contador == 3: # Columna 3
+                                    columna3=[*row] # Guarda lista de columna
+                                if contador == 4: # Columna 4
+                                    columna4=[*row] # Guarda lista de columna
+                                if contador == 5: # Columna 5
+                                    columna5=[*row] # Guarda lista de columna
+                                "print("Contador: ", contador)"
+                                #print "{:<10}{:>7}{:<10}".format(*row)
+                            """print("columna 1", columna1)
+                            print("columna 2", columna2)
+                            print("columna 3", columna3)
+                            print("columna 4", columna4)
+                            print("columna 5", columna5)"""
+                            
+                            #print("tamanio temporal",len(resultados))
+                            for valor in range(len(resultados)):
+                                #print("test", valor)
+                                print(columna1[valor],columna2[valor],columna3[valor],columna4[valor],columna5[valor])
+
+                        else:
+                            print("GG4")
+                            print("FECHA NO EXISTE GGGGG")
+
+                        if resultados:"""
                             print("Folio\tDescripcion\tCantidad\tPrecio\tFecha")
                             for folio, descripcion, cantidad, precio, fecha in resultados:
                                 print(f"{folio}\t{descripcion}\t{cantidad}\t\t{precio}\t{fecha}")
@@ -216,7 +255,7 @@ def ConsultarVenta():
                             print(f"El iva aplicable es de: ${total * .16:,.2f}")
                             print(f"El total con iva aplicado es de: ${total*1.16:,.2f}")
                         else:
-                            print("\nLa fecha solicitada no existe")
+                            print("\nLa fecha solicitada no existe")"""
                     except Error as e:
                         print(e)
                     except Exception:
