@@ -31,11 +31,49 @@ def Menu():
                 print(separador)
     return opcion
 
+def RegistrarVenta():
+    ListaVentas=[]
+    print('\n--------- Registro de venta ---------')
+
+    fecha = input('Introduzca la fecha de venta (ej. 10/10/2021)\n» ')
+    while True:
+        folio = int(input(f'Introduzca folio de venta de Llanta(s)\n» '))
+
+        if folio in DiccionarioVentas.keys():
+            print('Error, ya existe una venta con ese folio de venta')
+        else:
+            break
+
+    while True:
+        descripcion = input('Introduzca descripción del tipo de Llanta\n» ')
+        cantidadVenta = int(input('Introduzca cantidad a vender del tipo de Llanta mencionado\n» '))
+        precioVenta = float(input('Introduzca precio (sin iva) del tipo de Llanta (por unidad)\n» $'))
+        print(separador)
+        subtotal = (cantidadVenta * precioVenta)
+        print(f'Subtotal (sin iva) de las Llanta tipo {descripcion}:','${:.2f}'.format(subtotal))
+        print(separador)
+        """organizacionVenta = Venta(descripcion,cantidadVenta, precioVenta, fecha)
+        ListaVentas.append(organizacionVenta)
+        DiccionarioVentas[folio] = ListaVentas"""
+        agregaOtroLlantaMismaVenta = int(input('¿Desea agregar otra(s) venta(s) de Llanta(s) a la misma venta?\n[1] Si \n[2] No\n» '))
+
+        if agregaOtroLlantaMismaVenta == 2:
+            dimensionVentas, acumuladoVentas = 0 , 0
+            while dimensionVentas < len(DiccionarioVentas[folio]):
+                aculumador = (float(DiccionarioVentas[folio][dimensionVentas].precioVenta) * int(DiccionarioVentas[folio][dimensionVentas].cantidadVenta))
+                acumuladoVentas =  aculumador + acumuladoVentas
+                dimensionVentas += 1
+            print(separador)
+            print('Subtotal: ${:.2f}'.format(acumuladoVentas),'\nIVA:','${:.2f}'.format(acumuladoVentas * .16))
+            print('-' * 16,'\n\nTotal: ${:.2f}'.format(acumuladoVentas*1.16, 2),f'\nVenta realizada el: {fecha}\n')
+            print(separador)
+            break
+
 while True:
     opcionElegida = Menu() # Manda a ejecutar menú y trae elección
-    """if int(opcionElegida) == 1:
+    if int(opcionElegida) == 1:
         RegistrarVenta()
-    if int(opcionElegida) == 2:
+    """if int(opcionElegida) == 2:
         ConsultarVenta()"""
     if int(opcionElegida) == 3:
         break
