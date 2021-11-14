@@ -175,7 +175,8 @@ def RegistrarVenta():
 
 def ConsultarVenta():
     try:
-        with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
+        # original 2 >>>> with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
+        with sqlite3.connect("BD_PIA.db",detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
             cursorPIA = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
             while True:
                 fechaAConsultar = input("Ingrese la fecha a buscar (ej: 14/11/2021)\n» ")
@@ -190,15 +191,46 @@ def ConsultarVenta():
                     print("Error: La fecha no es valida, ingrese otra")
                 else:
                     print("La fecha si fue valida")
-                    fecha_a_consultar = {"Fecha":fechaAConsultar}
-                    print("gg1")
-                    cursorPIA.execute("SELECT descripcion, cantidad, precio, folio FROM DescVentas WHERE folio = 1")
+                    
+                    
+                    
+                    
+                    
+                    #try:
+                    #with sqlite3.connect("ConFechas_timestamp.db", detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
+                        # >>>>>>> original with sqlite3.connect("BD_PIA.db",detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
+                    mi_cursor = conn.cursor()
+                    mi_cursor.execute("SELECT folio, fecha FROM Folios")
+                    registros = mi_cursor.fetchall()
+            
+                    for folio, fecha in registros:
+                        print(f"Clave = {folio}, tipo de dato {type(folio)}")
+                        print(f"Fecha de registro = {fecha}, tipo de dato {type(fecha)}\n")
+                        
+                    """except sqlite3.Error as e:
+                        print (e)
+                    except Exception:
+                        print(f"Se produjo el siguiente error: {sys.exc_info()[0]}")
+                    finally:
+                        if (conn):
+                            conn.close()
+                            print("Se ha cerrado la conexión")"""
+                    
+                    
+                    
+                    
+                    
+                    
+                    #fecha_a_consultar = {"Fecha":fechaAConsultar}
+                    #print("gg1")
+                    #cursorPIA.execute("SELECT descripcion, cantidad, precio, folio FROM DescVentas WHERE folio = 1")
                     #cursorPIA.execute("SELECT descripcion, cantidad, precio, folio FROM DescVentas WHERE folio IN(SELECT folio FROM Folios WHERE fecha=:fechaAConsultar)","14/11/2021")
                     #cursorPIA.execute("SELECT folio FROM Folios WHERE folio = :Folio", valor_folio)
                     #valores_articulo = {"descripcion":descripcion, "cantidad":cantidadVenta, "precio":precioVenta, "folio":folioVentaInt}
-                    consulta = cursorPIA.fetchall()
-                    print(consulta)
+                    #consulta = cursorPIA.fetchall()
+                    #print(consulta)
                     break
+
     except Error as e:
         print(e)
     except Exception:
