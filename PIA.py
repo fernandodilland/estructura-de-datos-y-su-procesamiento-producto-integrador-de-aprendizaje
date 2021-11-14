@@ -19,9 +19,9 @@ def creacionBD_PIA():
         # Creación de Base de datos con el Folio y Descripcion Ventas
         try:
             with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
-                c = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
-                c.execute("CREATE TABLE IF NOT EXISTS Folios (folio INTEGER PRIMARY KEY NOT NULL, fecha TEXT NOT NULL);") #3 Envio instrucciones mediante el curosr
-                c.execute("CREATE TABLE IF NOT EXISTS DescVentas (numDescripcion INTEGER PRIMARY KEY NOT NULL, descripcion TEXT NOT NULL, cantidad INTEGER NOT NULL, precio REAL NOT NULL, folio INTEGER NOT NULL, FOREIGN KEY (folio) REFERENCES Folios (folio));") #3 Envio instrucciones mediante el cursor
+                cursorPIA = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
+                cursorPIA.execute("CREATE TABLE IF NOT EXISTS Folios (folio INTEGER PRIMARY KEY NOT NULL, fecha TEXT NOT NULL);") #3 Envio instrucciones mediante el curosr
+                cursorPIA.execute("CREATE TABLE IF NOT EXISTS DescVentas (numDescripcion INTEGER PRIMARY KEY NOT NULL, descripcion TEXT NOT NULL, cantidad INTEGER NOT NULL, precio REAL NOT NULL, folio INTEGER NOT NULL, FOREIGN KEY (folio) REFERENCES Folios (folio));") #3 Envio instrucciones mediante el cursor
         except Error as e:
             print(e)
         except Exception:
@@ -56,94 +56,63 @@ def Menu():
 
 def RegistrarVenta():
     
-    
-    
-    
-    
-    
     try:
         with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
-            c = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
-            c.execute("SELECT * FROM Cliente")
-            registros = c.fetchall()
-            
-            if registros:
-                print("Clientes\n")
-                print("id \t Nombre \t Apellidos")
-                print("*" * 40)
-                for id_cliente, nombre, apellidos in registros:
-                    print(f"{id_cliente}\t{nombre}\t{apellidos}")
-                print()
-                print("*" * 40)
-                    
-            c.execute("SELECT * FROM Vendedor")
-            registros = c.fetchall()
-            if registros:
-                print("Vendedores\n")
-                print("id \t Nombre \t Apellidos")
-                print("*" * 40)
-                for id_vendedor, nombre, apellidos in registros:
-                    print(f"{id_vendedor}\t{nombre}\t{apellidos}")
-                print()
-                print("*" * 40)
-                
+            cursorPIA = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
+
             while True:
-                
+
                 folio = int(input("Inserte el folio de la venta: "))
                 print("*" * 50)
-                
+
                 while True:
                     fecha = input("Fecha de la venta: ")
                     fecha_capturada = datetime.datetime.strptime(fecha, "%d/%m/%Y").date()
                     fecha_actual = datetime.date.today()
-                    
+
                     if fecha_capturada > fecha_actual:
                         print("La fecha capturada no es válida. Ingrese una fecha menor o igual a la fecha actual.")
                         print("*" * 50)
                     else:
                         print("*" * 50)
                         break
-                        
-                        
-                    
+
                 while True:
                     cliente = int(input("Ingrese el id del cliente: "))
                     valor_cliente = {"id_cliente":cliente} #Diccionario para evitar inyeccion de sql
-                    c.execute("SELECT id_cliente FROM Cliente WHERE id_cliente = :id_cliente", valor_cliente)
-                    registro = c.fetchall()
+                    cursorPIA.execute("SELECT id_cliente FROM Cliente WHERE id_cliente = :id_cliente", valor_cliente)
+                    registro = cursorPIA.fetchall()
                     if registro:
                         print("*" * 50)
                         break
                     else:
                         print("El id del cliente no existe. Ingresar un id válido.")
                         print("*" * 50)
-                    
-                
+
                 while True:
                     vendedor = int(input("Ingrese id del vendedor: "))
                     valor_vendedor = {"id_vendedor":vendedor}
-                    c.execute("SELECT id_vendedor FROM Vendedor WHERE id_vendedor = :id_vendedor", valor_vendedor)
-                    registro = c.fetchall()
+                    cursorPIA.execute("SELECT id_vendedor FROM Vendedor WHERE id_vendedor = :id_vendedor", valor_vendedor)
+                    registro = cursorPIA.fetchall()
                     if registro:
                         print("*" * 50)
                         break
                     else:
                         print("El id del vendedor no existe. Ingresar un id válido.")
                         print("*" * 50)
-                    
-                    
+
                 valores_venta = {"folio":folio, "fecha":fecha, "id_cliente":cliente, "id_vendedor":vendedor}
-                
-                c.execute(f"INSERT INTO Venta VALUES(:folio, :fecha, :id_cliente, :id_vendedor);", valores_venta)
-                
+
+                cursorPIA.execute(f"INSERT INTO Venta VALUES(:folio, :fecha, :id_cliente, :id_vendedor);", valores_venta)
+
                 print("*" * 50)
                 print("Venta inicializada.")
                 print("*" * 50)
-                    
+
                 while True:
                     descripcion = input("Ingrese una descripción para el artículo: ")
                     print("*" * 50)
-                    
+
                     while True:
                         cant_pzs = int(input("Ingrese la cantidad de piezas: "))
                         if cant_pzs > 0:
@@ -152,7 +121,7 @@ def RegistrarVenta():
                         else:
                             print("Ingresa una cantidad de piezas mayor a cero para continuar.")
                             print("*" * 50)
-                    
+
                     while True:
                         precio_unitario = float(input("Ingrese el precio unitario: "))
                         if precio_unitario > 0:
@@ -161,20 +130,20 @@ def RegistrarVenta():
                         else:
                             print("Ingresa un precio unitario mayor a cero para continuar.")
                             print("*" * 50)
-                            
+
                     valores_articulo = {"descripcion":descripcion, "cant_pzs":cant_pzs, "precio_unitario":precio_unitario, "folio":folio}
-                    
-                    c.execute("INSERT INTO Venta_detalles VALUES(:descripcion, :cant_pzs, :precio_unitario, :folio);", valores_articulo)
-                    
+
+                    cursorPIA.execute("INSERT INTO Venta_detalles VALUES(:descripcion, :cant_pzs, :precio_unitario, :folio);", valores_articulo)
+
                     print("*" * 50)
                     pregunta = input("¿Quiere seguir registrando? (S/N): ").upper()
-                    
+
                     if pregunta == 'S':
                         print("*" * 50)
                     else:
                         break
                 break
-                        
+
     except Error as e:
         print(e)
     except Exception:
