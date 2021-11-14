@@ -31,3 +31,11 @@ def Menu():
                 print(separador)
     return opcion
 
+while True:
+    opcionElegida = Menu() # Manda a ejecutar menú y trae elección
+    """if int(opcionElegida) == 1:
+        RegistrarVenta()
+    if int(opcionElegida) == 2:
+        ConsultarVenta()"""
+    if int(opcionElegida) == 3:
+        break
