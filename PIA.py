@@ -152,9 +152,6 @@ def RegistrarVenta():
                     else:
                         break
 
-                    break # Salida del while receptor de varios productos en misma venta
-                
-
 
                 """while True:
                     cliente = int(input("Ingrese el id del cliente: "))
