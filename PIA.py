@@ -192,7 +192,7 @@ def ConsultarVenta():
                     print("La fecha si fue valida")
                     fecha_a_consultar = {"Fecha":fechaAConsultar}
                     print("gg1")
-                    cursorPIA.execute("SELECT descripcion, cantidad, precio, folio FROM DescVentas WHERE folio IN 1")
+                    cursorPIA.execute("SELECT descripcion, cantidad, precio, folio FROM DescVentas WHERE folio = 1")
                     #cursorPIA.execute("SELECT descripcion, cantidad, precio, folio FROM DescVentas WHERE folio IN(SELECT folio FROM Folios WHERE fecha=:fechaAConsultar)","14/11/2021")
                     #cursorPIA.execute("SELECT folio FROM Folios WHERE folio = :Folio", valor_folio)
                     #valores_articulo = {"descripcion":descripcion, "cantidad":cantidadVenta, "precio":precioVenta, "folio":folioVentaInt}
