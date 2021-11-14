@@ -132,10 +132,22 @@ def RegistrarVenta():
                             print(error6)
 
                     # Sistema de obtención del precio del producto
-                    while True:
+                    #while True:
+                    validaNumeroFloat = False
+                    while not validaNumeroFloat:
+                        try:
+                            precioVenta = float(input('Introduzca precio (sin iva) del tipo de llanta (por unidad)\n» $'))
+                            if precioVenta > 0:
+                                validaNumeroFloat = True
+                            else:
+                                print(error4)
+                        except ValueError:
+                            print(error6)
+                                            
+                        """"
                         precioVenta = input('Introduzca precio (sin iva) del tipo de llanta (por unidad)\n» $')
                         try:
-                            int(precioVenta) # Validación TRY
+                            float(precioVenta) # Validación TRY
                             if precioVenta and precioVenta.strip():
                                 if int(precioVenta) > 0:
                                     break
@@ -144,7 +156,7 @@ def RegistrarVenta():
                             else:
                                 print(error5)
                         except:
-                            print(error6)
+                            print(error6)"""
                     
                     # Sistema temporal de almacenamiento de total
                     totalFinalUnitario = totalFinalUnitario + ( int(precioVenta) * int(cantidadVenta) )
@@ -154,8 +166,17 @@ def RegistrarVenta():
                     valores_articulo = {"descripcion":descripcion, "cantidad":cantidadVenta, "precio":precioVenta, "folio":folioVentaInt}
                     cursorPIA.execute("INSERT INTO DescVentas VALUES(:descripcion, :cantidad, :precio, :folio);", valores_articulo)
                     print(separador)
-                    pregunta = input("¿Quiere seguir registrando? (S/N)\n» ")
-                    if pregunta == 'S':
+                    while True:
+                        try:
+                            pregunta = int(input("¿Quiere seguir registrando? [1] Si [2] No\n» "))
+                            if pregunta <= 0 or pregunta >= 3:
+                                print("Ingrese una opción válida (1 ó 2)")
+                                print(separador)
+                            else:
+                                break
+                        except:
+                            print(error6)
+                    if int(pregunta) == 1:
                         print(separador)
                     else:
                         break
