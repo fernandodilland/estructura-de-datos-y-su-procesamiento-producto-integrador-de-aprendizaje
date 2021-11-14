@@ -191,4 +191,3 @@ while True:
     if opcionElegida == 4:
         GuardarSQL_Lite3()
         break
-
