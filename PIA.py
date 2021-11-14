@@ -102,7 +102,6 @@ def RegistrarVenta():
                 # Mecanismo de inyección de datos a SQL en Folios
                 folioVentaInt = int(folioVenta)
                 valores_venta = {"folio":folioVentaInt, "fecha":fecha}
-                #valores_articulo = {"descripcion":descripcion, "cant_pzs":cantidadVenta, "precio_unitario":precioVenta, "folio":Folio}
                 cursorPIA.execute("INSERT INTO Folios VALUES(:folio, :fecha);", valores_venta)
                 print(separador)
 
@@ -132,7 +131,6 @@ def RegistrarVenta():
                             print(error6)
 
                     # Sistema de obtención del precio del producto
-                    #while True:
                     validaNumeroFloat = False
                     while not validaNumeroFloat:
                         try:
@@ -143,20 +141,6 @@ def RegistrarVenta():
                                 print(error4)
                         except ValueError:
                             print(error6)
-                                            
-                        """"
-                        precioVenta = input('Introduzca precio (sin iva) del tipo de llanta (por unidad)\n» $')
-                        try:
-                            float(precioVenta) # Validación TRY
-                            if precioVenta and precioVenta.strip():
-                                if int(precioVenta) > 0:
-                                    break
-                                else:
-                                    print(error4)
-                            else:
-                                print(error5)
-                        except:
-                            print(error6)"""
                     
                     # Sistema temporal de almacenamiento de total
                     totalFinalUnitario = totalFinalUnitario + ( int(precioVenta) * int(cantidadVenta) )
@@ -193,11 +177,9 @@ def RegistrarVenta():
         if conn:
             conn.close()
 
-
 def ConsultarVenta():
     try:
         with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
-        #with sqlite3.connect("BD_PIA.db",detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
             cursorPIA = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
             while True:
                 fechaAConsultar = input("Ingrese la fecha a buscar (ej: 14/11/2021)\n» ")
@@ -206,21 +188,13 @@ def ConsultarVenta():
                 month = '{:02d}'.format(fecha.month)
                 day = '{:02d}'.format(fecha.day)
                 fecha = '{}/{}/{}'.format(day, month, year)
-                #print("Confirmación de fecha actual del sistema:",fecha)
 
                 if fechaAConsultar > fecha:
                     print("Error: La fecha no es valida, ingrese otra")
                 else:
-                    #print("La fecha si fue valida")
-
-
 
                     try:
                         sumaUnitariaTotal = 0
-                        #cursorPIA.execute("""SELECT fechaID.folio, Venta.descripcion, Venta.canitdad, Venta.precio, fechaID.fecha \
-                        #                    FROM FechaID\
-                        #                    INNER JOIN Venta on FechaID.folio = Venta.folio\
-                        #                    WHERE FechaID.fecha = ?""",(fechaAConsultar,))
 
                         cursorPIA.execute("""SELECT DescVentas.folio, DescVentas.descripcion, DescVentas.cantidad, DescVentas.precio, Folios.fecha \
                                             FROM DescVentas\
@@ -228,7 +202,6 @@ def ConsultarVenta():
                                             WHERE Folios.fecha = ?""",(fechaAConsultar,))
 
                         resultados = cursorPIA.fetchall()
-                        #print("PRUEBA CHIDA ", resultados)
                         if resultados:
 
                             # Mecanismo de obtención de datos por fila
@@ -239,8 +212,6 @@ def ConsultarVenta():
                             contador = 0
                             for row in zip(*resultados):
                                 contador += 1
-                                #print("Tipo dato row",type(*row))
-                                """print("TEST FER GUAPO",*row)"""
                                 if contador == 1: # Columna 1
                                     columna1=[*row] # Guarda lista de columna
                                 if contador == 2: # Columna 2
@@ -251,84 +222,25 @@ def ConsultarVenta():
                                     columna4=[*row] # Guarda lista de columna
                                 if contador == 5: # Columna 5
                                     columna5=[*row] # Guarda lista de columna
-                                #print("Contador: ", contador)
-                                #print "{:<10}{:>7}{:<10}".format(*row)
-                            """print("columna 1", columna1)
-                            print("columna 2", columna2)
-                            print("columna 3", columna3)
-                            print("columna 4", columna4)
-                            print("columna 5", columna5)"""
 
-                            #print("tamanio temporal",len(resultados))
                             for valor in range(len(resultados)):
-                                #print("test", valor)
-                                #print(columna1[valor],columna2[valor],columna3[valor],columna4[valor])
                                 sumaUnitariaTotal = sumaUnitariaTotal + (columna3[valor]*columna4[valor])
                                 print(" {:^4} | {:^14} | {:^8} | ${:.2f}".format(columna1[valor],columna2[valor],columna3[valor],columna4[valor]))
                             print(separador)
-                        else:
-                            print("FECHA NO EXISTE")
-                        
-                        print("Subtotal: ${:.2f}".format(sumaUnitariaTotal))
-                        print("IVA: ${:.2f}".format(sumaUnitariaTotal*.16))
-                        print("Total: ${:.2f}".format(sumaUnitariaTotal+sumaUnitariaTotal*.16))
-                        print(separador)
 
-                        if resultados:"""
-                            print("Folio\tDescripcion\tCantidad\tPrecio\tFecha")
-                            for folio, descripcion, cantidad, precio, fecha in resultados:
-                                print(f"{folio}\t{descripcion}\t{cantidad}\t\t{precio}\t{fecha}")
-                                total = (precio * cantidad) + total
-                            print(f"Total de las ventas: ${total:,.2f}")
-                            print(f"El iva aplicable es de: ${total * .16:,.2f}")
-                            print(f"El total con iva aplicado es de: ${total*1.16:,.2f}")
+                            print("Subtotal: ${:.2f}".format(sumaUnitariaTotal))
+                            print("IVA: ${:.2f}".format(sumaUnitariaTotal*.16))
+                            print("Total: ${:.2f}".format(sumaUnitariaTotal+sumaUnitariaTotal*.16))
+                            print(separador)
+
                         else:
-                            print("\nLa fecha solicitada no existe")"""
+                            print("Fecha no existe en la base de datos")
+                            print(separador)
+
                     except Error as e:
                         print(e)
                     except Exception:
                         print(f"Error: {sys.exc_info()[0]}")
-                    
-                    
-                    
-                    
-                    
-                    
-                    #try:
-                    #with sqlite3.connect("ConFechas_timestamp.db", detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
-                        # >>>>>>> original with sqlite3.connect("BD_PIA.db",detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES) as conn:
-                    """mi_cursor = conn.cursor()
-                    mi_cursor.execute("SELECT folio, fecha FROM Folios")
-                    registros = mi_cursor.fetchall()
-            
-                    for folio, fecha in registros:
-                        print(f"Clave = {folio}, tipo de dato {type(folio)}")
-                        print(f"Fecha de registro = {fecha}, tipo de dato {type(fecha)}\n")
-                    
-                    mi_cursor.execute("SELECT fecha FROM Folios WHERE fecha LIKE ? AND fecha NOT LIKE ?")"""
-                    
-                    """except sqlite3.Error as e:
-                        print (e)
-                    except Exception:
-                        print(f"Se produjo el siguiente error: {sys.exc_info()[0]}")
-                    finally:
-                        if (conn):
-                            conn.close()
-                            print("Se ha cerrado la conexión")"""
-                    
-                    
-                    
-                    
-                    
-                    
-                    #fecha_a_consultar = {"Fecha":fechaAConsultar}
-                    #print("gg1")
-                    #cursorPIA.execute("SELECT descripcion, cantidad, precio, folio FROM DescVentas WHERE folio = 1")
-                    #cursorPIA.execute("SELECT descripcion, cantidad, precio, folio FROM DescVentas WHERE folio IN(SELECT folio FROM Folios WHERE fecha=:fechaAConsultar)","14/11/2021")
-                    #cursorPIA.execute("SELECT folio FROM Folios WHERE folio = :Folio", valor_folio)
-                    #valores_articulo = {"descripcion":descripcion, "cantidad":cantidadVenta, "precio":precioVenta, "folio":folioVentaInt}
-                    #consulta = cursorPIA.fetchall()
-                    #print(consulta)
                     break
 
     except Error as e:
@@ -338,7 +250,6 @@ def ConsultarVenta():
     finally:
         if conn:
             conn.close()
-
 
 while True:
     creacionBD_PIA()
