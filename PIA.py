@@ -13,5 +13,21 @@ print('Bienvenido(a) al negocio de venta de llantas')
 print(separador)
 
 def Menu():
-    opcion = int(input('Menú de opciones:\n[1] Registrar una venta\n[2] Consultar una venta\n[3] Reporte de ventas de fecha\n[4] Salir y guardar en base de datos (.db)\n» '))
+    while True:
+        opcion = input('Menú de opciones:\n[1] Registrar una venta\n[2] Consultar venta(s) de un día específico\n[3] Salir\n» ')
+        try:
+            int(opcion)
+            if 1 <= int(opcion) <= 3:
+                break # La validación es correcta
+            else:
+                print("\nError #2: Introduzca un número de entre 1 y 3")
+                print(separador)
+        except ValueError:
+            try:
+                float(opcion)
+                print("test")
+            except ValueError:
+                print("\nError #1: Introduzca un número")
+                print(separador)
     return opcion
+
