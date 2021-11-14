@@ -191,22 +191,21 @@ def ConsultarVenta():
                     print("Error: La fecha no es valida, ingrese otra")
                 else:
                     print("La fecha si fue valida")
-
-
-
+                    
+                    
+                    
                     try:
                         #cursorPIA.execute("""SELECT fechaID.folio, Venta.descripcion, Venta.canitdad, Venta.precio, fechaID.fecha \
                         #                    FROM FechaID\
                         #                    INNER JOIN Venta on FechaID.folio = Venta.folio\
                         #                    WHERE FechaID.fecha = ?""",(fechaAConsultar,))
-
+                        
                         cursorPIA.execute("""SELECT DescVentas.folio, DescVentas.descripcion, DescVentas.cantidad, DescVentas.precio, Folios.fecha \
                                             FROM DescVentas\
                                             INNER JOIN Folios on DescVentas.folio = Folios.folio\
                                             WHERE Folios.fecha = ?""",(fechaAConsultar,))
-
+                        
                         resultados = cursorPIA.fetchall()
-                        print("PRUEBA CHIDA ", resultados)
                         if resultados:
                             print("Folio\tDescripcion\tCantidad\tPrecio\tFecha")
                             for folio, descripcion, cantidad, precio, fecha in resultados:
