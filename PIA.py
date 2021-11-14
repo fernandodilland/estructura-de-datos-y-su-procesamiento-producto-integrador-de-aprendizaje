@@ -34,7 +34,6 @@ def creacionBD_PIA():
         print(separador)
     else:
         print("Se identificó la base de datos (BD_PIA.db)")
-        
         print(separador)
 
 def Menu():
@@ -195,7 +194,6 @@ def ConsultarVenta():
 
                     try:
                         sumaUnitariaTotal = 0
-
                         cursorPIA.execute("""SELECT DescVentas.folio, DescVentas.descripcion, DescVentas.cantidad, DescVentas.precio, Folios.fecha \
                                             FROM DescVentas\
                                             INNER JOIN Folios on DescVentas.folio = Folios.folio\
@@ -220,8 +218,6 @@ def ConsultarVenta():
                                     columna3=[*row] # Guarda lista de columna
                                 if contador == 4: # Columna 4
                                     columna4=[*row] # Guarda lista de columna
-                                if contador == 5: # Columna 5
-                                    columna5=[*row] # Guarda lista de columna
 
                             for valor in range(len(resultados)):
                                 sumaUnitariaTotal = sumaUnitariaTotal + (columna3[valor]*columna4[valor])
