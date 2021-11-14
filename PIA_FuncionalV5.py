@@ -185,12 +185,12 @@ def ConsultarVenta():
                 month = '{:02d}'.format(fecha.month)
                 day = '{:02d}'.format(fecha.day)
                 fecha = '{}/{}/{}'.format(day, month, year)
-                #print("Confirmación de fecha actual del sistema:",fecha)
+                print("Confirmación de fecha actual del sistema:",fecha)
 
                 if fechaAConsultar > fecha:
                     print("Error: La fecha no es valida, ingrese otra")
                 else:
-                    #print("La fecha si fue valida")
+                    print("La fecha si fue valida")
 
 
 
@@ -212,7 +212,7 @@ def ConsultarVenta():
 
                             # Mecanismo de obtención de datos por fila
                             print(separador)
-                            print("En la fecha:", fechaAConsultar, "se encontró:",len(resultados),"venta(s) dentro de la base de datos")
+                            print("En la fecha:", fechaAConsultar, "se encontró:",len(resultados),"venta(s)")
                             print(separador)
                             print("Folio |  Descripcion   | Cantidad | Precio unitario")
                             contador = 0
