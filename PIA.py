@@ -34,6 +34,7 @@ def creacionBD_PIA():
         print(separador)
     else:
         print("Se identificó una base de datos (BD_PIA.db)")
+        
         print(separador)
 
 def Menu():
@@ -56,6 +57,9 @@ def Menu():
     return opcion
 
 def RegistrarVenta():
+
+    totalFinalUnitario = 0
+
     try:
         with sqlite3.connect("BD_PIA.db") as conn: #1 Establezco conexion
             cursorPIA = conn.cursor() #2 Creo cursor que viajara por la conexion llevando instrucciones
@@ -141,7 +145,11 @@ def RegistrarVenta():
                                 print(error5)
                         except:
                             print(error6)
+                    
+                    # Sistema temporal de almacenamiento de total
+                    totalFinalUnitario = totalFinalUnitario + ( int(precioVenta) * int(cantidadVenta) )
 
+                    # Mecanismo de inyección de datos a SQL en DescVentas
                     folioVentaInt = int(folioVenta)
                     valores_articulo = {"descripcion":descripcion, "cantidad":cantidadVenta, "precio":precioVenta, "folio":folioVentaInt}
                     cursorPIA.execute("INSERT INTO DescVentas VALUES(:descripcion, :cantidad, :precio, :folio);", valores_articulo)
@@ -151,73 +159,10 @@ def RegistrarVenta():
                         print(separador)
                     else:
                         break
+                print(separador)
+                print('\nEl subtotal a pagar es » ${:.2f}'.format(totalFinalUnitario))
+                print('El total a pagar es » ${:.2f}'.format(totalFinalUnitario+totalFinalUnitario*.16))
 
-
-                """while True:
-                    cliente = int(input("Ingrese el id del cliente: "))
-                    valor_cliente = {"id_cliente":cliente} #Diccionario para evitar inyeccion de sql
-                    cursorPIA.execute("SELECT id_cliente FROM Folios WHERE id_cliente = :id_cliente", valor_cliente)
-                    registro = cursorPIA.fetchall()
-                    if registro:
-                        print("*" * 50)
-                        break
-                    else:
-                        print("El id del cliente no existe. Ingresar un id válido.")
-                        print("*" * 50)"""
-
-                """while True:
-                    vendedor = int(input("Ingrese id del vendedor: "))
-                    valor_vendedor = {"id_vendedor":vendedor}
-                    cursorPIA.execute("SELECT id_vendedor FROM Vendedor WHERE id_vendedor = :id_vendedor", valor_vendedor)
-                    registro = cursorPIA.fetchall()
-                    if registro:
-                        print("*" * 50)
-                        break
-                    else:
-                        print("El id del vendedor no existe. Ingresar un id válido.")
-                        print("*" * 50)
-
-                valores_venta = {"folio":folio, "fecha":fecha, "id_cliente":cliente, "id_vendedor":vendedor}
-
-                cursorPIA.execute(f"INSERT INTO Venta VALUES(:folio, :fecha, :id_cliente, :id_vendedor);", valores_venta)
-
-                print("*" * 50)
-                print("Venta inicializada.")
-                print("*" * 50)
-
-                while True:
-                    descripcion = input("Ingrese una descripción para el artículo: ")
-                    print("*" * 50)
-
-                    while True:
-                        cant_pzs = int(input("Ingrese la cantidad de piezas: "))
-                        if cant_pzs > 0:
-                            print("*" * 50)
-                            break
-                        else:
-                            print("Ingresa una cantidad de piezas mayor a cero para continuar.")
-                            print("*" * 50)
-
-                    while True:
-                        precio_unitario = float(input("Ingrese el precio unitario: "))
-                        if precio_unitario > 0:
-                            print("*" * 50)
-                            break
-                        else:
-                            print("Ingresa un precio unitario mayor a cero para continuar.")
-                            print("*" * 50)
-
-                    valores_articulo = {"descripcion":descripcion, "cant_pzs":cant_pzs, "precio_unitario":precio_unitario, "folio":folio}
-
-                    cursorPIA.execute("INSERT INTO Venta_detalles VALUES(:descripcion, :cant_pzs, :precio_unitario, :folio);", valores_articulo)
-
-                    print("*" * 50)
-                    pregunta = input("¿Quiere seguir registrando? (S/N): ").upper()
-
-                    if pregunta == 'S':
-                        print("*" * 50)
-                    else:
-                        break"""
                 break
     except Error as e:
         print(e)
@@ -235,42 +180,7 @@ def ConsultarVenta():
     pass
     
     
-    """ListaVentas=[]
-    print('\n--------- Registro de venta ---------')
-
-    fecha = input('Introduzca la fecha de venta (ej. 10/10/2021)\n» ')
-    while True:
-        folio = int(input(f'Introduzca folio de venta de Llanta(s)\n» '))
-
-        if folio in DiccionarioVentas.keys():
-            print('Error, ya existe una venta con ese folio de venta')
-        else:
-            break
-
-    while True:
-        descripcion = input('Introduzca descripción del tipo de Llanta\n» ')
-        cantidadVenta = int(input('Introduzca cantidad a vender del tipo de Llanta mencionado\n» '))
-        precioVenta = float(input('Introduzca precio (sin iva) del tipo de Llanta (por unidad)\n» $'))
-        print(separador)
-        subtotal = (cantidadVenta * precioVenta)
-        print(f'Subtotal (sin iva) de las Llanta tipo {descripcion}:','${:.2f}'.format(subtotal))
-        print(separador)
-        organizacionVenta = Venta(descripcion,cantidadVenta, precioVenta, fecha)
-        ListaVentas.append(organizacionVenta)
-        DiccionarioVentas[folio] = ListaVentas
-        agregaOtroLlantaMismaVenta = int(input('¿Desea agregar otra(s) venta(s) de Llanta(s) a la misma venta?\n[1] Si \n[2] No\n» '))
-
-        if agregaOtroLlantaMismaVenta == 2:
-            dimensionVentas, acumuladoVentas = 0 , 0
-            while dimensionVentas < len(DiccionarioVentas[folio]):
-                aculumador = (float(DiccionarioVentas[folio][dimensionVentas].precioVenta) * int(DiccionarioVentas[folio][dimensionVentas].cantidadVenta))
-                acumuladoVentas =  aculumador + acumuladoVentas
-                dimensionVentas += 1
-            print(separador)
-            print('Subtotal: ${:.2f}'.format(acumuladoVentas),'\nIVA:','${:.2f}'.format(acumuladoVentas * .16))
-            print('-' * 16,'\n\nTotal: ${:.2f}'.format(acumuladoVentas*1.16, 2),f'\nVenta realizada el: {fecha}\n')
-            print(separador)
-            break"""
+    
 
 while True:
     creacionBD_PIA()
