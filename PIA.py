@@ -4,8 +4,9 @@ from collections import namedtuple
 import sys
 import sqlite3
 from sqlite3 import Error
-from datetime import datetime
-from os import paths
+from datetime import date, datetime
+import os.path
+from os import path
 import datetime
 
 # Declaraciones iniciales
@@ -139,7 +140,7 @@ def RegistrarVenta():
                                 print(error4)
                         except ValueError:
                             print(error6)
-
+                    
                     # Sistema temporal de almacenamiento de total
                     totalFinalUnitario = totalFinalUnitario + ( int(precioVenta) * int(cantidadVenta) )
 
