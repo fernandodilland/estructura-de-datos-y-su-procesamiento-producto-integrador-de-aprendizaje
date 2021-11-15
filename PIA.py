@@ -140,7 +140,7 @@ def RegistrarVenta():
                                 print(error4)
                         except ValueError:
                             print(error6)
-                    
+
                     # Sistema temporal de almacenamiento de total
                     totalFinalUnitario = totalFinalUnitario + ( int(precioVenta) * int(cantidadVenta) )
 
